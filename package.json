@@ -1,0 +1,19 @@
+{
+  "name": "areq",
+  "version": "0.0.1",
+  "description": "An asynchronous request controller",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zigbeer/areq.git"
+  },
+  "author": "Simen Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zigbeer/areq/issues"
+  },
+  "homepage": "https://github.com/zigbeer/areq#readme"
+}
