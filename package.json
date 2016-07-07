@@ -1,10 +1,10 @@
 {
   "name": "areq",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "An asynchronous request controller",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make test-all"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/zigbeer/areq/issues"
   },
-  "homepage": "https://github.com/zigbeer/areq#readme"
+  "homepage": "https://github.com/zigbeer/areq#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3",
+    "q": "^1.4.1"
+  },
+  "dependencies": {}
 }
