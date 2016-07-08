@@ -9,6 +9,13 @@ function Areq(emitter, areqTimeout) {
     this._pendings = {};    // { evtName: { deferred, listener }, ... }
 }
 
+Areq.prototype.changeDefaultTimeout = function (time) {
+    if (typeof time !== 'numner' || time < 1)
+        throw new TypeError('Time for timeout should be a number and greater than 1ms.');
+
+    this._areqTimeout = time;
+    return this._areqTimeout;
+};
 
 Areq.prototype.getRecord = function (evt) {
     throwIfEvtNotString(evt);
@@ -39,12 +46,10 @@ Areq.prototype.register = function (evt, deferred, listener, time) {
         }).done();
 
         this._emitter.once(evt, listener);
-
         this._pendings[evt] = {
             listener: listener,
             deferred: deferred
         }
-
         registered = true;
     }
 
@@ -63,7 +68,6 @@ Areq.prototype.deregister = function (evt) {
             emitter.removeListener(evt, rec.listener);
             rec.listener = null;
         }
-
         this._pendings[evt] = null;
         delete this._pendings[evt];
     }
@@ -72,7 +76,6 @@ Areq.prototype.deregister = function (evt) {
 Areq.prototype.resolve = function (evt, value) {
     var rec = this.getRecord(evt),
         deferred = rec ? rec.deferred : null;
-
     if (deferred && deferred.promise.isPending())
         deferred.resolve(value);
 
@@ -82,7 +85,6 @@ Areq.prototype.resolve = function (evt, value) {
 Areq.prototype.reject = function (evt, err) {
     var rec = this.getRecord(evt),
         deferred = rec ? rec.deferred : null;
-
     if (deferred && deferred.promise.isPending())
         deferred.reject(err);
 
