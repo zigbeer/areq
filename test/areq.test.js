@@ -3,7 +3,7 @@ var EventEmitter = require('events'),
     Q = require('q'),
     Areq = require('../index.js');
 
-var emitter = Object.create(new EventEmitter());
+var emitter = new EventEmitter();
 var someAreq = new Areq(emitter);
 
 describe('APIs Arguments Check for Throwing Errors', function() {
