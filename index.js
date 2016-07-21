@@ -28,9 +28,9 @@ Areq.prototype.isEventPending = function (evt) {
 };
 
 Areq.prototype.register = function (evt, deferred, listener, time) {
-    var registered = false,
-        areqTimeout = time || this._areqTimeout,
-        alarm;  // timeout controller
+    var self = this,
+        registered = false,
+        areqTimeout = time || this._areqTimeoutl
 
     if (typeof listener !== 'function')
         throw new TypeError('listener should be a function.');
@@ -41,16 +41,16 @@ Areq.prototype.register = function (evt, deferred, listener, time) {
         if (!deferred.hasOwnProperty('promise'))
             throw new TypeError('deferred should be a deferred object of Promise.');
 
-        deferred.promise.timeout(areqTimeout).fail(function(err) {
-            deferred.reject(err);
-        }).done();
-
         this._emitter.once(evt, listener);
         this._pendings[evt] = {
             listener: listener,
             deferred: deferred
         }
         registered = true;
+
+        deferred.promise.timeout(areqTimeout).fail(function(err) {
+            self.reject(evt, err);
+        }).done();
     }
 
     return registered;

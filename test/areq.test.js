@@ -243,6 +243,7 @@ describe('APIs Arguments Check for Throwing Errors', function() {
 describe('APIs Functional Checks', function() {
     var testEvent1 = 'test_event1',
         testEvent2 = 'test_event2',
+        testEvent3 = 'test_event3',
         noSuchEvent = 'no_such_event';
 
     var areqApi1 = function (callback) {
@@ -262,6 +263,16 @@ describe('APIs Functional Checks', function() {
         someAreq.register(testEvent2, deferred, function () {
             someAreq.resolve(testEvent2, 'hello');
         }, 10000);
+
+        return deferred.promise.nodeify(callback);
+    };
+
+    var areqApi3 = function (callback) {
+        var deferred = Q.defer();
+
+        someAreq.register(testEvent2, deferred, function () {
+            someAreq.resolve(testEvent3, 'hello');
+        }, 30);
 
         return deferred.promise.nodeify(callback);
     };
@@ -339,4 +350,12 @@ describe('APIs Functional Checks', function() {
         expect(someAreq.isEventPending(testEvent2)).to.be.false;
         expect(someAreq.getRecord(testEvent2)).to.be.undefined;
     });
+
+    it('check rejected value for areqApi3()', function (done) {
+        areqApi3().fail(function (err) {
+            if (err.code === 'ETIMEDOUT' && someAreq.getRecord(testEvent3) === undefined) 
+                done();
+        }).done();
+    });
+
 });
