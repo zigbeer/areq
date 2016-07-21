@@ -30,7 +30,7 @@ Areq.prototype.isEventPending = function (evt) {
 Areq.prototype.register = function (evt, deferred, listener, time) {
     var self = this,
         registered = false,
-        areqTimeout = time || this._areqTimeoutl
+        areqTimeout = time || this._areqTimeout;
 
     if (typeof listener !== 'function')
         throw new TypeError('listener should be a function.');
