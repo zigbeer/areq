@@ -1,7 +1,5 @@
 # areq  
-  
-
-[![NPM](https://nodei.co/npm/areq.png?downloads=true)](https://nodei.co/npm/areq/)  
+A timeout controller for asynchronous requests with defer.  
 
 [![Travis branch](https://img.shields.io/travis/zigbeer/areq/master.svg?maxAge=2592000)](https://travis-ci.org/zigbeer/areq)
 [![npm](https://img.shields.io/npm/v/areq.svg?maxAge=2592000)](https://www.npmjs.com/package/areq)
@@ -14,7 +12,6 @@
 2. [Installation](#Installation)  
 3. [Usage](#Usage)
 4. [APIs](#APIs)  
-6. [Table of Identifiers](#Identifiers) 
 
 <br />
 
@@ -81,12 +78,12 @@ fooAsyncReq(function (err, result) {
 
 **Arguments**
 
-* emitter (*EventEmitter*): The emitter that emits the events for your listening to resolve the asynchronous responses.  
-* areqTimeout (*Number*): The default timeout in milliseconds. If elapsed time from the moment of a request sending out has reached this setting, the request will be rejected with a timeout error. If it is not given, a value of 30000 ms will be used as the default.  
+1. `emitter` (*EventEmitter*): The emitter that emits the events for your listening to resolve the asynchronous responses.  
+2. `areqTimeout` (*Number*, optional): The default timeout in milliseconds. If elapsed time from the moment of a request sending out has reached this setting, the request will be rejected with a timeout error. If it is not given, a value of 30000 ms will be used as the default.  
 
 **Returns:**  
   
-* (_Object_) Returns an instance of Areq class.  
+* (_Object_): Returns an instance of Areq class.  
 
 **Example**
 
@@ -96,18 +93,19 @@ var Areq = require('areq');
 var areq = new Areq(foo_nwk_controller);
 // foo_nwk_controller is your event emitter to dispatch messages from lower layer
 ```
+  
 ********************************************
-<br />
-
 <a name="API_register"></a>
 ### register(evt, deferred, listener[, time])
 > Register an unique event to listen for the specific response coming from the emitter.  
 
 **Arguments**
 
-* evt (*String*): The unique event according to the specific response.  
-* deferred (*Object*): The defer object used in your method.  
-* listener (*Function*): The event listener. With `areq`, now you should use `areq.resolve(evt, value)` and `areq.reject(evt, err)` instead of using `deferred.resolve(value)` and `deferred.reject(err)`. `areq.resolve()` and `areq.reject()` will take care of the listener deregistering and timeout cleaning for you.  
+1. `evt` (*String*): The unique event according to the specific response.  
+2. `deferred` (*Object*): The defer object used in your method.  
+3. `listener` (*Function*): The event listener. With `areq`, now you should use `areq.resolve(evt, value)` and `areq.reject(evt, err)` instead of using `deferred.resolve(value)` and `deferred.reject(err)`. `areq.resolve()` and `areq.reject()` will take care of the listener deregistering and timeout cleaning for you.  
+4. `time` (*Number*, optional): Register this areq with a timeout in milliseconds. A default value of 30000 will be used if not given.  
+
 
 **Returns:**  
   
@@ -117,17 +115,19 @@ var areq = new Areq(foo_nwk_controller);
 
 ```js
 var myAreqMethod  = function () {
-    var deferred = Q.defer();
-    var transId = my_nwk_controller.nextTransId();
-    var eventToListen = 'AF:incomingMsg:' + transId;
-    // event to listner maybe like this: AF:incomingMsg:172, where 172 is a unique transection id
+    var deferred = Q.defer(),
+        transId = my_nwk_controller.nextTransId(),
+        eventToListen = 'AF:incomingMsg:' + transId;
+        // event to listner maybe like this: AF:incomingMsg:172, 
+        // where 172 is a unique transection id
 
     areq.register(eventToListen, deferred, function (result) {
         if (result !== 'what_i_want')
             areq.reject(eventToListen, new Error('Bad response.'));
         else
             areq.resolve(eventToListen, result);
-    }, 10000);  // if this reponse doesn't come back wihtin 20 secs, your myAreqMethod() will be rejected with a timeout error 
+    }, 10000);  // if this reponse doesn't come back wihtin 10 secs, 
+                // your myAreqMethod() will be rejected with a timeout error 
 
     return deferred.promise.nodeify(callback);
 };
@@ -149,17 +149,16 @@ myAreqMethod(function (err, rsp) {
         console.log(rsp);
 });
 ```
+  
 ********************************************
-<br />
-
 <a name="API_resolve"></a>
 ### resolve(evt, value)
 > Resolve the received response if the response is exactly that you need.  
 
 **Arguments**
 
-* evt (*String*): The unique event according to the specific response.  
-* value (*Depends*): The value you'd like to resolve.  
+1. `evt` (*String*): The unique event according to the specific response.  
+2. `value` (*Depends*): The value to be resolved.  
 
 **Returns:**  
   
@@ -170,16 +169,17 @@ myAreqMethod(function (err, rsp) {
 
 ```js
 var myAreqMethod  = function () {
-    var deferred = Q.defer();
-    var transId = my_nwk_controller.nextTransId();
-    var eventToListen = 'ZDO:incomingMsg:' + transId;
+    var deferred = Q.defer(),
+        transId = my_nwk_controller.nextTransId(),
+        eventToListen = 'ZDO:incomingMsg:' + transId;
 
     areq.register(eventToListen, deferred, function (rsp) {
         if (rsp.status !== 0 && rsp.status !== 'SUCCESS')
             areq.reject(eventToListen, new Error('Bad response.'));
         else
             areq.resolve(eventToListen, rsp);
-    });  // if this reponse doesn't come back wihtin default 30 secs, myAreqMethod() will be rejected with a timeout error 
+    });  // if this reponse doesn't come back wihtin default 30 secs, 
+         // myAreqMethod() will be rejected with a timeout error 
 
     return deferred.promise.nodeify(callback);
 };
@@ -192,42 +192,38 @@ myAreqMethod(function (err, rsp) {
         console.log(rsp);
 });
 ```
+  
 ********************************************
-<br />
-
 <a name="API_reject"></a>
 ### reject(evt, err)
 > Reject the received response if the response is not what you need.  
 
 **Arguments**
 
-* evt (*String*): The unique event according to the specific response.  
-* err (*Error*): The reason why you reject this response.  
+1. `evt` (*String*): The unique event according to the specific response.  
+2. `err` (*Error*): The reason why you reject this response.  
 
 **Returns:**  
   
 * (_None_)  
 
-
 **Example**
   
 See the exmaple given with [resolve()](#API_resolve_example) method.
+  
 
 ********************************************
-<br />
-
 <a name="API_getRecord"></a>
 ### getRecord(evt)
 > Get record of the given event name. Returns undefined if not found.  
 
 **Arguments**
 
-* evt (*String*): The unique event according to the specific response.  
+1. `evt` (*String*): The unique event according to the specific response.  
 
 **Returns:**  
   
-* (_Object_) The record in the registry.  
-
+* (_Object_): The record in the registry.  
 
 **Example**
 
@@ -236,20 +232,19 @@ areq.getRecord('AF:incomingMsg:6:11:162');  // { deferred: xxx, listener: yyy }
 
 areq.getRecord('No_such_event_is_waiting');  // undefined
 ```
+  
 ********************************************
-<br />
-
 <a name="API_isEventPending"></a>
 ### isEventPending(evt)
 > Checks if the event is pending. Usually, if you find someone is pending over there, it is suggested to change a new event to listen to. For example, get another transection id to make a new event name for your request.  
 
 **Arguments**
 
-* evt (*String*): The unique event according to the specific response.  
+1. `evt` (*String*): The unique event according to the specific response.  
 
 **Returns:**  
   
-* (_Boolean_) Return `true` is the given event is pending, otherwise returns `false`.  
+* (_Boolean_): Return `true` is the given event is pending, otherwise returns `false`.  
 
 
 **Example**
@@ -258,5 +253,4 @@ areq.getRecord('No_such_event_is_waiting');  // undefined
 areq.isEventPending('AF:incomingMsg:6:11:161');  // true
 areq.isEventPending('AF:incomingMsg:6:11:162');  // false
 ```
-********************************************
-<br />
+  
