@@ -1,6 +1,6 @@
 {
   "name": "areq",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A timeout controller for asynchronous requests with defer.",
   "main": "index.js",
   "scripts": {
