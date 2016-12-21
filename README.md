@@ -23,36 +23,8 @@ Please visit the [Wiki](https://github.com/zigbeer/areq/wiki).
   
 ## Usage  
 
-```js
-var Q = require('q'),
-    Areq = require('areq'),
-    EventEmitter = require('events');
-
-var myEmitter = new EventEmitter(),
-    areq = new Areq(myEmitter, 6000);   // timeout after 6 seconds
-
-var fooAsyncReq = function (callback) {
-    var deferred = Q.defer();
-
-    areq.register('some_event', deferred, function (result) {
-        if (result !== 'what_i_want') {
-            areq.reject('some_event', new Error('Bad response.'));
-        } else {
-            areq.resolve('some_event', result);
-        }
-    });
-
-    return deferred.promise.nodeify(callback);
-};
-
-fooAsyncReq(function (err, result) {
-    if (err)
-        console.log(err);
-    else
-        console.log(result);
-});
-
-```
+See [Usage](https://github.com/zigbeer/areq/wiki#Usage) on the Wiki for details.  
+  
 
 ## License  
 
